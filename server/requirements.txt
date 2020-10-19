@@ -1,0 +1,16 @@
+click==7.1.2
+Flask==1.1.2
+Flask-Cors==3.0.9
+Flask-WTF==0.14.3
+itsdangerous==1.1.0
+Jinja2==2.11.2
+MarkupSafe==1.1.1
+numpy==1.19.1
+pandas==1.0.5
+python-dateutil==2.8.1
+pytz==2020.1
+six==1.15.0
+Werkzeug==1.0.1
+WTForms==2.3.3
+WTForms-JSON==0.3.3
+wtforms-jsonschema @ git+https://github.com/ikwtif/wtforms-jsonschema.git@f6e1eb98da034d7c2eaff28583e547ae2670d2dd
