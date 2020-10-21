@@ -102,48 +102,44 @@ def token():
                     })
 
 
-@app.route('/berekening/metselwerk', methods=['GET', 'POST'])
-def metselwerkr():
+@app.route('/berekening/<calc_id>', methods=['GET', 'POST'])
+def metselwerkr(calc_id):
     app.logger.debug('POST method recieved')
     if request.method == 'POST':
-        #form = MetselwerkForm.from_json(request.get_json())
-        response_object = {'status': '200'}
-
-        '''
-        if form.validate():
-            print('validated')
-            response_object = {'status': 'success'}
-            formaten = form.baksteen_formaat.data.split("x")
-            print(formaten)
-            brick = Masonry(stone_height=int(formaten[2]),
-                            stone_width=int(formaten[1]),
-                            stone_length=int(formaten[0]),
-                            stone_kind=form.baksteen_type.data,
-                            stone_fmean=form.baksteen_druksterkte.data,
-                            stone_group=form.baksteen_groep.data,
-                            mortar_kind=form.mortel_type.data,
-                            mortar_group=form.mortel_druksterkte.data,
-                            application=form.controle_materialen.data,
-                            supervision=form.controle_uitvoering.data
-                            )
-            wand = WallSimple(hoogte=form.wand_hoogte.data,
-                              lengte=form.wand_lengte.data,
-                              vaste_zijrand=form.randvoorwaarde_randen.data,
-                              dak=form.randvoorwaarde_dak.data,
-                              inklemming=form.randvoorwaarde_inklemming.data,
-                              eindsteun=form.randvoorwaarde_steun.data,
-                              lengte_overspanning=form.randvoorwaarde_overspanning.data,
-                              hyperstatisch=form.randvoorwaarde_hyperstatisch.data,
-                              dragende_richting=form.randvoorwaarde_dragend.data,
-                              masonry=brick,
-                              last_op_wand=100
-                              )
-            results = wand.output()
+        if calc_id == 'metselwerk':
+            form = MetselwerkForm.from_json(request.get_json())
+            if form.validate():
+                print('validated')
+                response_object = {'status': 'success'}
+                formaten = form.baksteen_formaat.data.split("x")
+                print(formaten)
+                brick = Masonry(stone_height=int(formaten[2]),
+                                stone_width=int(formaten[1]),
+                                stone_length=int(formaten[0]),
+                                stone_kind=form.baksteen_type.data,
+                                stone_fmean=form.baksteen_druksterkte.data,
+                                stone_group=form.baksteen_groep.data,
+                                mortar_kind=form.mortel_type.data,
+                                mortar_group=form.mortel_druksterkte.data,
+                                application=form.controle_materialen.data,
+                                supervision=form.controle_uitvoering.data
+                                )
+                wand = WallSimple(hoogte=form.wand_hoogte.data,
+                                  lengte=form.wand_lengte.data,
+                                  vaste_zijrand=form.randvoorwaarde_randen.data,
+                                  dak=form.randvoorwaarde_dak.data,
+                                  inklemming=form.randvoorwaarde_inklemming.data,
+                                  eindsteun=form.randvoorwaarde_steun.data,
+                                  lengte_overspanning=form.randvoorwaarde_overspanning.data,
+                                  hyperstatisch=form.randvoorwaarde_hyperstatisch.data,
+                                  dragende_richting=form.randvoorwaarde_dragend.data,
+                                  masonry=brick,
+                                  last_op_wand=100
+                                  )
+                results = wand.output()
         else:
             results = {'status': '400'}
         return jsonify(results)
-        '''
-        return jsonify(response_object)
     elif request.method == 'GET':
         response_object = {'status': '400'}
         return jsonify(response_object)
