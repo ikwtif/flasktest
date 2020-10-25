@@ -8,7 +8,7 @@
     <b-navbar-nav>
       <b-nav-item href="#">Dossiers</b-nav-item>
       <b-nav-item v-b-toggle.sidebar-1>Berekeningen</b-nav-item>
-
+      <b-nav-item href="/berekeningen/betonkolom">Betonkolom</b-nav-item>
     </b-navbar-nav>
   </b-navbar>
 

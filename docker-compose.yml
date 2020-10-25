@@ -1,0 +1,39 @@
+version: '3.5'
+
+services:
+  flask:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    volumes:
+      - ./server:/app
+    environment:
+      - FLASK_APP=/app/app.py
+    command: flask run --host=0.0.0.0
+    ports:
+      - 8080:5000
+    networks:
+      my-network:
+        aliases:
+          - flask-app
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nginx
+    command: nginx -g 'daemon off;'
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - flask
+    networks:
+      - my-network
+    ports:
+      - 80:80
+
+
+networks:
+    my-network:

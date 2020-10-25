@@ -40,6 +40,36 @@ CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
 
 app.logger.debug('starting app')
 
+KOLOMTYPES = ['rechthoek', 'cirkel', 'L-kolom']
+NODES_BOVEN = ['scharnier', 'vrij', 'inklemming', 'rol', 'veer']
+NODES_BENEDEN = ['scharnier', 'inklemming', 'veer']
+
+class ConcreteColumnForm(Form):
+    betonkwaliteiten = list()
+    dat = list()
+    for k, v in CYLINDER_TO_CUBE_STRENGTHS.items():
+        betonkwaliteiten.append(f'C{k}/{v}')
+        dat.append(k)
+    # TODO fix dat
+
+    type = SelectField(label='type', choices=list(zip(KOLOMTYPES, KOLOMTYPES)), default='rechthoek')
+    nodeboven = SelectField(label='Node boven', choices=list(zip(NODES_BOVEN, NODES_BOVEN)), default=NODES_BOVEN[0])
+    veerconstantek1 = FloatField(label='Veerconstante k1', default=0.1)
+    nodeonder = SelectField(label='Node onder', choices=list(zip(NODES_BENEDEN, NODES_BENEDEN)), default=NODES_BENEDEN[0])
+    veerconstantek2 = FloatField(label='Veerconstante k2', default=0.1)
+    betonkwaliteit = SelectField(label='betonkwaliteit', choices=list(zip(betonkwaliteiten, betonkwaliteiten)), default='C25/30')
+    staalkwaliteit = IntegerField(label='staalkwaliteit', default=400)
+    materiaalcoeff = FloatField(label='materiaalcoefficient', default=1.5)
+    lengte = IntegerField(label='lengte', default=3000)
+    breedte = IntegerField(label='breedte', default=140)
+    breedte_2 = IntegerField(label='breedte', default=0)
+    hoogte = IntegerField(label='hoogte', default=300)
+    hoogte_2 = IntegerField(label='hoogte', default=0)
+    radius = IntegerField(label='radius', default=0)
+    langskracht = IntegerField(label='Nd', default=0)
+    As0 = IntegerField(label='gekozen As0', default=226)
+    As = IntegerField(label='gekozen As', default=226)
+
 
 class MetselwerkForm(Form):
     baksteen_formaat = SelectField(label='formaat', choices=list(zip( STONE_DIMENSIONS, STONE_DIMENSIONS)), default='290x140x190')
@@ -102,6 +132,14 @@ def token():
                     })
 
 
+@app.route('/betonkolom')
+def kolom():
+    form = ConcreteColumnForm()
+    data = WTFormToJSONSchema().convert_form(form)
+
+    conv = convert_vue(data)
+    return jsonify(conv)
+
 @app.route('/berekening/<calc_id>', methods=['GET', 'POST'])
 def metselwerkr(calc_id):
     app.logger.debug('POST method recieved')
@@ -137,8 +175,42 @@ def metselwerkr(calc_id):
                                   last_op_wand=100
                                   )
                 results = wand.output()
+
+        elif calc_id == 'betonkolom':
+            form = ConcreteColumnForm.from_json(request.get_json())
+            if form.validate():
+                response_object = {'status': 'success'}
+                response_object['result'] = {'one': 1, 'two': 2}
+                beton = form.betonkwaliteit.data
+                kwaliteit_beton = beton[1:3]
+                kolom = ConcreteColumn(length=float(form.hoogte.data),
+                                       width=float(form.breedte.data),
+                                       height=float(form.hoogte.data),
+                                       lownode=form.nodeonder.data,
+                                       highnode=form.nodeboven.data,
+                                       materiaalcoeff=float(form.materiaalcoeff.data),
+                                       fck=float(kwaliteit_beton),
+                                       width2=float(form.breedte_2.data),
+                                       height2=float(form.hoogte_2.data),
+                                       radius=float(form.radius.data),
+                                       k1=float(form.veerconstantek2.data),
+                                       k2=float(form.veerconstantek1.data)
+                                       )
+
+                Nd = form.langskracht.data
+                staalkwaliteit = form.staalkwaliteit.data
+                As0 = form.As0.data
+                As = form.As.data
+                kolom.add_total_reinforcement(area_steel=As,
+                                              area_steel_stifness=As0,
+                                              fsd=staalkwaliteit
+                                              )
+                results = kolom.reinforcement_ugt(load_kN=Nd,
+                                                  full_report=True
+                                                  )
         else:
             results = {'status': '400'}
+
         return jsonify(results)
     elif request.method == 'GET':
         response_object = {'status': '400'}

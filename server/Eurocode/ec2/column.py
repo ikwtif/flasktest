@@ -320,7 +320,7 @@ class ConcreteColumn(Column, Concrete):
         ro = self.area_steel / self.area
         #ro = 0.01
         N_design = load_kN * 10 ** 3
-        Area_Column_Min = self._area_column_minimum(N_design, ro, fsd)
+        Area_Column_Min = self._area_column_minimum(N_design, ro, self.fsd)
 
         errors = dict()
         errors['errors'] = list()
@@ -386,7 +386,7 @@ def _output_empty ():
             'AreaMinimum': {'value': 0, 'units': 'mm³'},
             'AreaColumn': {'value': 0, 'units': 'mm³'},
             'AreaSteelPercent0.3': {'value': 0, 'units': 'mm³'},
-            'AreaSteelPercent0.8': {'value': 0, 'units': 'mm³'},
+            'AreaMinSteelPercent0.8': {'value': 0, 'units': 'mm³'},
             'AreaSteelPercent4': {'value': 0, 'units': 'mm³'}
             }
 

@@ -361,7 +361,7 @@ export default {
       console.log(this.sendCheck);
     },
     getToken() {
-      const path = '/csrf-cookie';
+      const path = 'http://localhost:8080/csrf-cookie';
       axios.get(path, { withCredentials: true })
         .then((response) => {
           console.log('response token');
@@ -375,7 +375,7 @@ export default {
         });
     },
     getCalc() {
-      const path = '/berekening/metselwerk';
+      const path = 'http://localhost:8080/berekening/metselwerk';
       axios.get(path, {
         headers: {
           Cookie: 'token=' + this.tok,
@@ -392,7 +392,7 @@ export default {
         });
     },
     getResult(payload) {
-      const path = '/berekening/metselwerk';
+      const path = 'http://localhost:8080/berekening/metselwerk';
       console.log(payload);
       axios.post(path, payload, {
         headers: {
@@ -438,7 +438,7 @@ export default {
       this.getResult(payload);
     },
     getmetselwerk() {
-      const path = '/metselwerk';
+      const path = 'http://localhost:8080/metselwerk';
       axios.get(path)
         .then((res) => {
           this.metselwerkform = res.data;

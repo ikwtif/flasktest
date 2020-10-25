@@ -6,7 +6,9 @@
         <nav class="mb-3">
             <b-nav vertical>
               <b-nav-item active>Active</b-nav-item>
+              <b-nav-item href="/books">Books</b-nav-item>
               <b-nav-item href="/berekeningen/metselwerk">Metselwerk</b-nav-item>
+              <b-nav-item href="/berekeningen/betonkolom">Betonkolom</b-nav-item>
 
             </b-nav>
           </nav>

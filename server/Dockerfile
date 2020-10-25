@@ -1,3 +1,6 @@
+FROM python:3.8-alpine
+
+EXPOSE 8080
 WORKDIR /app
 
 RUN apk update && \
@@ -17,5 +20,6 @@ RUN apk update && \
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev libffi-dev openssl-dev libressl-dev libxml2 libxml2-dev libxslt libxslt-dev libjpeg-turbo-dev zlib-dev git
 ADD requirements.txt ./
 RUN apk update && pip install -r requirements.txt
-ADD . .
 RUN pip install gunicorn
+ADD . .
+#CMD gunicorn -b 0.0.0.0:5000 app:app --daemon
